@@ -33,6 +33,8 @@ import (
 #include <stdlib.h>
 #include <pcap.h>
 #include <stdint.h>
+#include <sys/epoll.h>
+#include <poll.h>
 
 // Some old versions of pcap don't define this constant.
 #ifndef PCAP_NETMASK_UNKNOWN
@@ -142,28 +144,25 @@ int pcap_offline_filter_escaping(struct bpf_program *fp, uintptr_t pkt_hdr, uint
 
 // pcap_wait returns when the next packet is available or the timeout expires.
 // Since it uses pcap_get_selectable_fd, it will not work in Windows.
-int pcap_wait(pcap_t *p, int usec) {
-	fd_set fds;
+int pcap_wait(pcap_t *p, int msec) {
+	struct pollfd pfd;
 	int fd;
-	struct timeval tv;
 
 	fd = pcap_get_selectable_fd(p);
 	if(fd < 0) {
 		return fd;
 	}
 
-	FD_ZERO(&fds);
-	FD_SET(fd, &fds);
+	pfd.fd = fd;
+	pfd.events = POLLIN;
 
-	tv.tv_sec = 0;
-	tv.tv_usec = usec;
-
-	if(usec != 0) {
-		return select(fd+1, &fds, NULL, NULL, &tv);
+	if(msec != 0) {
+		// select accepts
+		return poll(&pfd, 1, msec);
 	}
 
 	// block indefinitely if no timeout provided
-	return select(fd+1, &fds, NULL, NULL, NULL);
+	return poll(&pfd, 1, 0);
 }
 
 */
@@ -688,8 +687,8 @@ func (p *Handle) waitForPacket() {
 	// need to wait less than the read timeout according to pcap documentation.
 	// timeoutMillis rounds up to at least one millisecond so we can safely
 	// subtract up to a millisecond.
-	usec := timeoutMillis(p.timeout) * 1000
-	usec -= 100
+	usec := timeoutMillis(p.timeout)
+	usec--
 
 	C.pcap_wait(p.cptr, C.int(usec))
 }
