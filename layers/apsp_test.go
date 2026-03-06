@@ -12,7 +12,7 @@ import (
 	"net"
 	"testing"
 
-	"github.com/google/gopacket"
+	"github.com/Mzack9999/gopacket"
 )
 
 func TestApspDecoding(t *testing.T) {

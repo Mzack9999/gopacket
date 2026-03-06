@@ -20,7 +20,7 @@ import (
 	"unsafe"
 
 	"github.com/ebitengine/purego"
-	"github.com/google/gopacket"
+	"github.com/Mzack9999/gopacket"
 )
 
 const errorBufferSize = 256

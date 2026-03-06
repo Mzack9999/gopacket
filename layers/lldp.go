@@ -11,7 +11,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/google/gopacket"
+	"github.com/Mzack9999/gopacket"
 )
 
 // LLDPTLVType is the type of each TLV value in a LinkLayerDiscovery packet.

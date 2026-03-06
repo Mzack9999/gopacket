@@ -1,4 +1,4 @@
-module github.com/google/gopacket
+module github.com/Mzack9999/gopacket
 
 go 1.24.0
 

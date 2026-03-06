@@ -14,7 +14,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/google/gopacket"
+	"github.com/Mzack9999/gopacket"
 )
 
 // APSP represents a packet encrypted with the Andromeda Paddywhack Security Protocol.

@@ -9,7 +9,7 @@ package layers
 import (
 	"errors"
 
-	"github.com/google/gopacket"
+	"github.com/Mzack9999/gopacket"
 )
 
 // AGUEVar0 represents a packet encoded with Generic UDP Encapsulation.
