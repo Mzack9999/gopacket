@@ -82,26 +82,6 @@ func mightLoad(fun string) uintptr {
 	return addr
 }
 
-func byteSliceToString(bval []byte) string {
-	for i := range bval {
-		if bval[i] == 0 {
-			return string(bval[:i])
-		}
-	}
-	return string(bval[:])
-}
-
-// bytePtrToString returns a string copied from pointer to a null terminated byte array
-// WARNING: ONLY SAFE WITH IF r POINTS TO C MEMORY!
-// govet will complain about this function for the reason stated above
-func bytePtrToString(r uintptr) string {
-	if r == 0 {
-		return ""
-	}
-	bval := (*[1 << 30]byte)(unsafe.Pointer(r))
-	return byteSliceToString(bval[:])
-}
-
 var wpcapHandle windows.Handle
 var msvcrtHandle syscall.Handle
 var (
