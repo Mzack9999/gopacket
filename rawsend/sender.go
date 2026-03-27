@@ -15,11 +15,15 @@ import (
 	"syscall"
 )
 
+// socketFD is the platform-specific file descriptor / handle type.
+// Unix: int, Windows: syscall.Handle (uintptr).
+type socketFD = sysSocketFD
+
 // Sender sends raw IPv4 packets via direct sendto() syscall,
 // bypassing Go's net.IPConn.WriteTo overhead (poll.FD mutex,
 // deadline management, error wrapping).
 type Sender struct {
-	fd   int
+	fd   socketFD
 	conn *net.IPConn           // prevent GC from closing fd
 	sa   syscall.SockaddrInet4 // reused per send; only Addr changes
 }
@@ -32,9 +36,9 @@ func NewFromIPConn(conn *net.IPConn) (*Sender, error) {
 	if err != nil {
 		return nil, err
 	}
-	var fd int
+	var fd socketFD
 	var controlErr error
-	controlErr = rc.Control(func(fdPtr uintptr) { fd = int(fdPtr) })
+	controlErr = rc.Control(func(fdPtr uintptr) { fd = socketFD(fdPtr) })
 	if controlErr != nil {
 		return nil, controlErr
 	}
@@ -43,12 +47,12 @@ func NewFromIPConn(conn *net.IPConn) (*Sender, error) {
 
 // NewFromFD creates a Sender from an already-known file descriptor.
 // conn must be the net.IPConn that owns fd (kept alive to prevent GC).
-func NewFromFD(fd int, conn *net.IPConn) *Sender {
+func NewFromFD(fd socketFD, conn *net.IPConn) *Sender {
 	return &Sender{fd: fd, conn: conn}
 }
 
-// FD returns the raw socket file descriptor.
-func (s *Sender) FD() int { return s.fd }
+// FD returns the raw socket file descriptor (or handle on Windows).
+func (s *Sender) FD() socketFD { return s.fd }
 
 // SendTo transmits pkt to the IPv4 address dstIP using a direct
 // sendto() syscall.  The kernel adds the IPv4 header based on the

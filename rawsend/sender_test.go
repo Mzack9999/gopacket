@@ -7,12 +7,12 @@ import (
 
 func TestNewFromFD(t *testing.T) {
 	conn, _ := net.ListenIP("ip4:1", nil)
-	s := NewFromFD(42, conn)
+	s := NewFromFD(socketFD(42), conn)
 	if s == nil {
 		t.Fatal("NewFromFD returned nil")
 	}
-	if s.FD() != 42 {
-		t.Errorf("FD() = %d, want 42", s.FD())
+	if s.FD() != socketFD(42) {
+		t.Errorf("FD() = %v, want 42", s.FD())
 	}
 }
 
