@@ -47,7 +47,7 @@ type sockaddrInet4Raw struct {
 // Loaded via purego (no CGO).  NewBatch returns nil when sendmmsg
 // is not available.
 type Batch struct {
-	fd        int
+	fd        socketFD
 	count     int
 	batchSize int
 	maxPktLen int
@@ -61,7 +61,7 @@ type Batch struct {
 // NewBatch creates a batch sender that accumulates up to batchSize
 // packets of at most maxPktLen bytes each, sending them all in one
 // sendmmsg syscall.  Returns nil if sendmmsg is not available.
-func NewBatch(fd, batchSize, maxPktLen int) *Batch {
+func NewBatch(fd socketFD, batchSize, maxPktLen int) *Batch {
 	if sendmmsgAddr == 0 {
 		return nil
 	}

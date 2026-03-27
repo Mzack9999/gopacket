@@ -7,7 +7,7 @@ type Batch struct{}
 
 // NewBatch returns nil on non-Linux platforms where sendmmsg
 // is not available.
-func NewBatch(_, _, _ int) *Batch { return nil }
+func NewBatch(_ socketFD, _, _ int) *Batch { return nil }
 
 func (b *Batch) Add(_ []byte, _ [4]byte) error { return nil }
 func (b *Batch) Flush() error                   { return nil }
